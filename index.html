@@ -62,13 +62,13 @@
   <div class="card">
     <h2>Spelling overschrijf boekje maker</h2>
     <div style="background: #f8f9fa; border: 1px solid #e2e6ea; border-radius: 8px; padding: 12px 16px; margin: 0 auto 18px auto; font-size: 13px; color: #555; line-height: 1.6; text-align: left;">
-      <strong>Stap 1:</strong> Bestanden worden automatisch geladen (of kies handmatig je map via het vak hieronder).<br>
-      <strong>Stap 2:</strong> Kies je groep.<br>
-      <strong>Stap 3:</strong> Kies het blok.<br>
-      <strong>Stap 4:</strong> Kies of je lessen wil overslaan zoals grammatica lessen en de toets (standaard overgeslagen).<br>
-      <strong>Stap 5:</strong> Kies of je oefenbladen achterin wil toevoegen en hoeveel.<br>
-      <strong>Stap 6:</strong> Kies per les welke categorie je de kinderen wil laten oefenen.<br>
-      <strong>Stap 7:</strong> Klik op Samenstellen en downloaden.<br>
+ 
+      <strong>Stap 1:</strong> Kies je groep.<br>
+      <strong>Stap 2:</strong> Kies het blok.<br>
+      <strong>Stap 3:</strong> Kies of je lessen wil overslaan zoals grammatica lessen en de toets (standaard overgeslagen).<br>
+      <strong>Stap 4:</strong> Kies of je oefenbladen achterin wil toevoegen en hoeveel.<br>
+      <strong>Stap 5:</strong> Kies per les welke categorie je de kinderen wil laten oefenen.<br>
+      <strong>Stap 6:</strong> Klik op Samenstellen en downloaden.<br>
     </div>
 
     <!-- Map bron & status -->
@@ -83,7 +83,7 @@
     <div class="settings">
       <!-- 1. GROEP KEUZE -->
       <div class="selection-box">
-        <label>STAP 2: KIES DE GROEP</label>
+        <label>STAP 1: KIES DE GROEP</label>
         <div class="button-selector" id="groupSelector">
           <button type="button" class="select-btn group-btn" data-groep="4" onclick="kiesGroep('4')">Groep 4</button>
           <button type="button" class="select-btn group-btn" data-groep="5" onclick="kiesGroep('5')">Groep 5</button>
@@ -95,7 +95,7 @@
 
       <!-- 2. BLOK KEUZE -->
       <div class="selection-box">
-        <label>STAP 3: KIES HET BLOK (1 t/m 10)</label>
+        <label>STAP 2: KIES HET BLOK (1 t/m 10)</label>
         <div class="button-selector" id="blockSelector">
           <button type="button" class="select-btn block-btn" data-blok="1" onclick="kiesBlok('1')">1</button>
           <button type="button" class="select-btn block-btn" data-blok="2" onclick="kiesBlok('2')">2</button>
@@ -119,7 +119,7 @@
 
       <!-- Lessen overslaan & Oefenbladen -->
       <div style="margin-top: 10px;">
-        <label style="font-weight: 500; font-size: 14px; color: #333; display: block; margin-bottom: 6px;">Lessen overslaan (stap 4):</label>
+        <label style="font-weight: 500; font-size: 14px; color: #333; display: block; margin-bottom: 6px;">Lessen overslaan (stap 3):</label>
         <div class="toggle-group">
           <button type="button" class="toggle-btn active" id="btnSkipGrammatica" onclick="toggleOption('skipGrammatica')">Grammatica lessen overslaan (lessen 3)</button>
           <button type="button" class="toggle-btn active" id="btnSkipToets" onclick="toggleOption('skipToets')">Toets overslaan (les 3.4)</button>
@@ -127,7 +127,7 @@
 
         <hr style="border: none; border-top: 1px dashed #d5dbe0; margin: 16px 0; width: 100%;">
 
-        <label style="font-weight: 500; font-size: 14px; color: #333; display: block; margin-bottom: 6px;">Oefenbladen (stap 5):</label>
+        <label style="font-weight: 500; font-size: 14px; color: #333; display: block; margin-bottom: 6px;">Oefenbladen (stap 4):</label>
         <div style="display: inline-flex; align-items: center; gap: 6px; margin-top: 4px;">
           <button type="button" class="toggle-btn" id="btnAddOefenbladen" onclick="toggleOption('addOefenbladen')">
             + Oefenbladen toevoegen <span id="oefenTeller" style="font-weight:400; opacity:0.85;">(kies groep)</span>
@@ -141,13 +141,13 @@
     <!-- 3. WEEKPLANNER -->
     <div class="planner-section" id="plannerSection">
       <div id="plannerAlert" class="planner-alert">👆 Kies hierboven eerst een groep om de categorieën te laden.</div>
-      <h3 id="plannerHeader" style="font-size: 15px; margin: 0 0 10px 0; display:none;">Kies categorieën per week (stap 6):</h3>
+      <h3 id="plannerHeader" style="font-size: 15px; margin: 0 0 10px 0; display:none;">Kies categorieën per week (stap 5):</h3>
       <div id="weeksContainer"></div>
       <button type="button" class="add-week-btn" id="addWeekBtn" style="display:none;" onclick="voegWeekToe()">+ Nog een week toevoegen</button>
     </div>
 
     <!-- 4. ACTIEKNOP -->
-    <button class="action-btn" id="processBtn" disabled onclick="genereerWerkboek()">Samenstellen en downloaden (stap 7)</button>
+    <button class="action-btn" id="processBtn" disabled onclick="genereerWerkboek()">Samenstellen en downloaden (stap 6)</button>
     <div id="status"></div>
   </div>
 
@@ -342,7 +342,7 @@
         updateOefenTeller();
       } catch (e) {
         // Fallback als er geen bestanden.json gevonden wordt
-        boxTitle.innerText = '📁 Stap 1: Klik hier om de map met overschrijfbladen te kiezen';
+        boxTitle.innerText = '📁 Stap 0: Klik hier om de map met overschrijfbladen te kiezen';
         boxSub.innerText = 'OP-Vakken-Spelling-Boekjes maker-Overschrijfbladen';
         folderStatus.innerText = '';
         plannerSection.style.display = 'block';
@@ -556,7 +556,7 @@
 
     async function genereerWerkboek() {
       if (!actieveGroep) {
-        alert("Selecteer eerst een groep (4 t/m 8) bij STAP 2.");
+        alert("Selecteer eerst een groep (4 t/m 8) bij STAP 1.");
         return;
       }
 
