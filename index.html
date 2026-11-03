@@ -11,7 +11,7 @@
     p.subtitle { color: #666; font-size: 13px; text-align: center; margin-bottom: 18px; }
 
     /* Bron / Map status */
-    .folder-box { border: 2px dashed #0066cc; border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; background: #fafbfc; transition: 0.2s; margin-bottom: 16px; }
+    .folder-box { border: 2px dashed #0066cc; border-radius: 8px; padding: 14px; text-align: center; cursor: pointer; background: #fafbfc; transition: 0.2s; margin-top: 10px; }
     .folder-box:hover { background: #eef6ff; }
     .folder-status { font-size: 13px; color: #167a32; font-weight: 600; margin-top: 5px; }
 
@@ -56,13 +56,18 @@
     .action-btn:disabled { background: #b0c4de; cursor: not-allowed; }
 
     #status { margin-top: 14px; font-weight: 600; text-align: center; font-size: 14px; }
+
+    /* Uitklapbaar beheer onderaan */
+    details.manual-storage { margin-top: 24px; padding-top: 12px; border-top: 1px dashed #d5dbe0; font-size: 13px; }
+    details.manual-storage summary { font-weight: 600; color: #666; cursor: pointer; user-select: none; outline: none; text-align: center; list-style: none; }
+    details.manual-storage summary::-webkit-details-marker { display: none; }
+    details.manual-storage summary:hover { color: #0066cc; }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>Spelling overschrijf boekje maker</h2>
     <div style="background: #f8f9fa; border: 1px solid #e2e6ea; border-radius: 8px; padding: 12px 16px; margin: 0 auto 18px auto; font-size: 13px; color: #555; line-height: 1.6; text-align: left;">
- 
       <strong>Stap 1:</strong> Kies je groep.<br>
       <strong>Stap 2:</strong> Kies het blok.<br>
       <strong>Stap 3:</strong> Kies of je lessen wil overslaan zoals grammatica lessen en de toets (standaard overgeslagen).<br>
@@ -70,14 +75,6 @@
       <strong>Stap 5:</strong> Kies per les welke categorie je de kinderen wil laten oefenen.<br>
       <strong>Stap 6:</strong> Klik op Samenstellen en downloaden.<br>
     </div>
-
-    <!-- Map bron & status -->
-    <div class="folder-box" onclick="document.getElementById('folderInput').click()">
-      <strong id="boxTitle">☁️ Werkbladen worden gecontroleerd...</strong>
-      <div id="boxSub" style="font-size: 12px; color: #666; margin-top: 4px;">Even geduld, online bestanden worden opgehaald...</div>
-      <div class="folder-status" id="folderStatus"></div>
-    </div>
-    <input type="file" id="folderInput" webkitdirectory directory multiple style="display:none">
 
     <!-- Instellingen -->
     <div class="settings">
@@ -149,6 +146,17 @@
     <!-- 4. ACTIEKNOP -->
     <button class="action-btn" id="processBtn" disabled onclick="genereerWerkboek()">Samenstellen en downloaden (stap 6)</button>
     <div id="status"></div>
+
+    <!-- UITKLAPBAAR BEHEER ONDERAAN -->
+    <details class="manual-storage">
+      <summary>⚙️ Handmatig andere map / bestanden kiezen (optioneel)</summary>
+      <div class="folder-box" onclick="document.getElementById('folderInput').click()">
+        <strong id="boxTitle">☁️ Werkbladen worden gecontroleerd...</strong>
+        <div id="boxSub" style="font-size: 12px; color: #666; margin-top: 4px;">Even geduld, online bestanden worden opgehaald...</div>
+        <div class="folder-status" id="folderStatus"></div>
+      </div>
+      <input type="file" id="folderInput" webkitdirectory directory multiple style="display:none">
+    </details>
   </div>
 
   <script>
@@ -253,7 +261,6 @@
       oefenTeller.style.color = count > 0 ? '#167a32' : '#cc0000';
     }
 
-    // Ondersteunt zowel online URLs als lokale File objecten
     function indexeerBestand(padStr, bestandOfUrl) {
       const schonePad = padStr.replace(/\\/g, '/');
       const delen = schonePad.split('/').filter(Boolean);
@@ -321,7 +328,6 @@
       });
     }
 
-    // 1. Automatisch online inladen via bestanden.json indien aanwezig
     async function laadOnlineVoorraad() {
       try {
         const res = await fetch('bestanden.json');
@@ -329,20 +335,19 @@
         const bestandsLijst = await res.json();
 
         databasePerGroep = { '4': {}, '5': {}, '6': {}, '7': {}, '8': {} };
-        oefenbladenPerGroep = { '4': [], '5': [], '6': [], '7': [], '8': [] };
+        oefenbladenPerGroep = { '4': [], '5': [], '6': [], '7': [], '8': {} };
 
         bestandsLijst.forEach(relPad => {
           indexeerBestand(relPad, { url: encodeURI(relPad) });
         });
 
-        boxTitle.innerText = '☁️️ Online overschrijfbladen actief';
+        boxTitle.innerText = '☁️ Online overschrijfbladen actief';
         boxSub.innerText = 'Klik hier als je toch een lokale map van je computer wilt kiezen.';
         folderStatus.innerText = '✓ Alle bestanden zijn automatisch online geladen.';
         plannerSection.style.display = 'block';
         updateOefenTeller();
       } catch (e) {
-        // Fallback als er geen bestanden.json gevonden wordt
-        boxTitle.innerText = '📁 Stap 0: Klik hier om de map met overschrijfbladen te kiezen';
+        boxTitle.innerText = '📁 Klik hier om de map met overschrijfbladen te kiezen';
         boxSub.innerText = 'OP-Vakken-Spelling-Boekjes maker-Overschrijfbladen';
         folderStatus.innerText = '';
         plannerSection.style.display = 'block';
@@ -350,7 +355,6 @@
     }
     window.addEventListener('DOMContentLoaded', laadOnlineVoorraad);
 
-    // 2. Handmatig map kiezen via Verkenner (overschrijft of vult aan)
     folderInput.addEventListener('change', (e) => {
       const bestanden = Array.from(e.target.files).filter(f => f.name.toLowerCase().endsWith('.pdf'));
       if (bestanden.length === 0) {
@@ -359,7 +363,7 @@
       }
 
       databasePerGroep = { '4': {}, '5': {}, '6': {}, '7': {}, '8': {} };
-      oefenbladenPerGroep = { '4': [], '5': [], '6': [], '7': [], '8': [] };
+      oefenbladenPerGroep = { '4': [], '5': [], '6': [], '7': [], '8': {} };
 
       bestanden.forEach(file => {
         const relPad = file.webkitRelativePath || file.name;
